@@ -1,0 +1,45 @@
+spin_manifest_version = 2
+
+[application]
+name = "ds2-bridge"
+version = "0.1.0"
+authors = ["Radu Matei <radu@fermyon.com>"]
+description = "A collection of serverless functions to process DataStream2 logs"
+
+[variables]
+# variables for accessing an S3-compatible storage
+s3_bucket = { required = true }
+s3_access_key_id = { required = true, secret = true }
+s3_secret_access_key = { required = true, secret = true }
+s3_region = { required = true }
+s3_endpoint = { required = true }
+
+[[trigger.http]]
+# The route is a wildcard that matches any path under /api/v1/transform
+# and will be used to route requests to the ds2-parquet component
+route = "/api/v1/transform/..."
+component = "ds2-parquet"
+
+# The ds2-parquet component
+[component.ds2-parquet]
+# The Wasm component to instantiate and execute whenever a route that matches the request is hit
+source = "ds2-parquet/target/wasm32-wasip2/release/ds2_parquet.wasm"
+# Allow outbound requests to S3
+# Must match the bucket + region in the s3_bucket / s3_endpoint deploy
+# variables. Virtual-hosted addressing: the bucket is part of the hostname.
+# A mismatch surfaces as "dispatch failure", not as a config error.
+allowed_outbound_hosts = ["https://akamai-log-analysis.s3.us-west-2.amazonaws.com"]
+
+# The build command to compile the component
+[component.ds2-parquet.build]
+command = "cargo build --target wasm32-wasip2 --release"
+workdir = "ds2-parquet"
+watch = ["src/**/*.rs", "Cargo.toml"]
+
+# S3 configuration variables
+[component.ds2-parquet.variables]
+s3_bucket = "{{s3_bucket}}"
+s3_access_key_id = "{{s3_access_key_id}}"
+s3_secret_access_key = "{{s3_secret_access_key}}"
+s3_region = "{{s3_region}}"
+s3_endpoint = "{{s3_endpoint}}"

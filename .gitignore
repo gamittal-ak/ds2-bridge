@@ -1,0 +1,43 @@
+# ---------------------------------------------------------------------------
+# ds2-bridge — the DirecTV deliverable only.
+# Scope and reasoning: REPO_PLAN.md
+# ---------------------------------------------------------------------------
+
+# SECRETS — live production AWS credentials. Never commit.
+s3-vars.json
+stage-vars.json
+*-vars.json
+
+# CUSTOMER DATA — real DirecTV viewer traffic: client IPs, paths, user agents.
+# Never commit production output. Use Akamai's published sample instead.
+*.parquet
+log-*.parquet
+
+# Build output. NOTE: a fresh clone cannot deploy until you build, because
+# spin.toml reads ds2-parquet/target/wasm32-wasip2/release/ds2_parquet.wasm
+# See RUNBOOK.md section 4.2.
+target/
+**/target/
+*.wasm
+dist/
+node_modules/
+
+# Workspace binding — machine-specific app id
+.spin-aka/
+**/.spin-aka/
+
+# Research and reference materials — kept locally, not shipped
+research/
+baseline/
+
+# Local scratch and OS noise
+*.pyc
+__pycache__/
+.venv/
+*.tmp
+*.bak
+*.orig
+~$*
+.DS_Store
+Thumbs.db
+desktop.ini

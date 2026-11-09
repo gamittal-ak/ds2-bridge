@@ -1,0 +1,30 @@
+[package]
+name = "ds2-parquet"
+authors = ["Radu Matei <radu@fermyon.com>"]
+description = "A Rust function that transforms DataStream2 logs to the Parquet format"
+version = "0.1.0"
+rust-version = "1.78"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+anyhow = "1"
+arrow = "60.0.0"
+aws-credential-types = { version = "1", features = ["hardcoded-credentials"] }
+bytes = "1"
+aws-sdk-s3 = { version = "1", default-features = false, features = ["behavior-version-latest"] }
+aws-smithy-async = "1"
+aws-smithy-runtime-api = { version = "1", features = ["client"] }
+aws-smithy-types = "1"
+chrono = "0.4"
+http = "1.2.0"
+parquet = "60.0.0"
+spin-sdk = "7.0.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+[workspace]
